@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 import S3 from 'aws-sdk/clients/s3';
 
 async function main() {

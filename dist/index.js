@@ -7,6 +7,25 @@ require('./sourcemap-register.js');module.exports =
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -20,23 +39,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __importDefault(__nccwpck_require__(2186));
+const core = __importStar(__nccwpck_require__(2186));
 const s3_1 = __importDefault(__nccwpck_require__(3256));
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        const AWS_KEY_ID = core_1.default.getInput('aws_key_id', { required: true });
-        const SECRET_ACCESS_KEY = core_1.default.getInput('aws_secret_access_key', { required: true });
-        const bucket_name = core_1.default.getInput('aws_state_bucket_name', { required: true });
-        const directory = core_1.default.getInput('aws_state_directory', { required: true });
-        const command = core_1.default.getInput('aws_state_command', { required: true });
+        const AWS_KEY_ID = core.getInput('aws_key_id', { required: true });
+        const SECRET_ACCESS_KEY = core.getInput('aws_secret_access_key', { required: true });
+        const bucket_name = core.getInput('aws_state_bucket_name', { required: true });
+        const directory = core.getInput('aws_state_directory', { required: true });
+        const command = core.getInput('aws_state_command', { required: true });
         const state = new S3State(new s3_1.default({ accessKeyId: AWS_KEY_ID, secretAccessKey: SECRET_ACCESS_KEY }), bucket_name, `${directory}/github_actions_state.json`);
         if (command === 'increment_counter') {
-            let counter_name = core_1.default.getInput('counter_name') || 'counter';
+            let counter_name = core.getInput('counter_name') || 'counter';
             let counter_value = yield state.incrementCounter(counter_name);
-            core_1.default.setOutput('counter_value', `${counter_value}`);
+            core.setOutput('counter_value', `${counter_value}`);
         }
         else {
-            core_1.default.setFailed(`Invalid "aws_state_command" value: "${command}"`);
+            core.setFailed(`Invalid "aws_state_command" value: "${command}"`);
         }
     });
 }
@@ -82,7 +101,7 @@ class S3State {
         return __awaiter(this, void 0, void 0, function* () {
             const object = yield this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
             if (typeof object !== 'string') {
-                core_1.default.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found`);
+                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found`);
                 return {};
             }
             try {
@@ -91,12 +110,12 @@ class S3State {
                     return stateJson;
                 }
                 else {
-                    core_1.default.info(`getState ${this.bucket_name}::${this.state_json_filepath}: not a StateRecord type`);
+                    core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: not a StateRecord type`);
                     return {};
                 }
             }
             catch (_a) {
-                core_1.default.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json`);
+                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json`);
                 return {};
             }
         });
@@ -108,7 +127,7 @@ class S3State {
     }
 }
 main().catch(function (error) {
-    core_1.default.setFailed(error.message);
+    core.setFailed(error.message);
 });
 
 
