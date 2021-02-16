@@ -52,7 +52,7 @@ function main() {
         if (command === 'increment_counter') {
             let counter_name = core.getInput('counter_name') || 'counter';
             let counter_value = yield state.incrementCounter(counter_name);
-            core.info(`counter_value: no string found`);
+            core.info(`counter_value: ${counter_value}`);
             core.setOutput('counter_value', `${counter_value}`);
         }
         else {
@@ -76,6 +76,9 @@ function isStateRecord(obj) {
         }
     }
     return true;
+}
+function emptyStateRecord() {
+    return {};
 }
 class S3State {
     constructor(s3, bucket_name, state_json_filepath) {
@@ -103,7 +106,7 @@ class S3State {
             const object = yield this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
             if (typeof object !== 'string') {
                 core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found`);
-                return {};
+                return emptyStateRecord();
             }
             try {
                 const stateJson = JSON.parse(object);
@@ -112,12 +115,12 @@ class S3State {
                 }
                 else {
                     core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: not a StateRecord type`);
-                    return {};
+                    return emptyStateRecord();
                 }
             }
             catch (_a) {
                 core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json`);
-                return {};
+                return emptyStateRecord();
             }
         });
     }

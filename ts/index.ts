@@ -17,7 +17,7 @@ async function main() {
     if (command === 'increment_counter') {
         let counter_name = core.getInput('counter_name') || 'counter';
         let counter_value = await state.incrementCounter(counter_name);
-        core.info(`counter_value: no string found`);
+        core.info(`counter_value: ${counter_value}`);
         core.setOutput('counter_value', `${counter_value}`);
     } else {
         core.setFailed(`Invalid "aws_state_command" value: "${command}"`);
@@ -46,6 +46,10 @@ function isStateRecord(obj: unknown): obj is StateRecord {
     return true;
 }
 
+function emptyStateRecord(): StateRecord {
+    return {};
+}
+
 class S3State {
     constructor(private s3: S3, private bucket_name: string, private state_json_filepath: string) {}
 
@@ -67,7 +71,7 @@ class S3State {
         const object: unknown = await this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
         if (typeof object !== 'string') {
             core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found`);
-            return {};
+            return emptyStateRecord();
         }
         try {
             const stateJson: unknown = JSON.parse(object);
@@ -75,11 +79,11 @@ class S3State {
                 return stateJson;
             } else {
                 core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: not a StateRecord type`);
-                return {};
+                return emptyStateRecord();
             }
         } catch {
             core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json`);
-            return {};
+            return emptyStateRecord();
         }
     }
 
