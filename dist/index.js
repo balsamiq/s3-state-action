@@ -52,6 +52,7 @@ function main() {
         if (command === 'increment_counter') {
             let counter_name = core.getInput('counter_name') || 'counter';
             let counter_value = yield state.incrementCounter(counter_name);
+            core.info(`counter_value: no string found`);
             core.setOutput('counter_value', `${counter_value}`);
         }
         else {

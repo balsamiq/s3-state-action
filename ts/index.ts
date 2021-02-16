@@ -17,6 +17,7 @@ async function main() {
     if (command === 'increment_counter') {
         let counter_name = core.getInput('counter_name') || 'counter';
         let counter_value = await state.incrementCounter(counter_name);
+        core.info(`counter_value: no string found`);
         core.setOutput('counter_value', `${counter_value}`);
     } else {
         core.setFailed(`Invalid "aws_state_command" value: "${command}"`);
