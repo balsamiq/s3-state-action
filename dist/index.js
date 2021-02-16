@@ -104,13 +104,17 @@ class S3State {
     }
     getState() {
         return __awaiter(this, void 0, void 0, function* () {
-            const object = yield this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
-            if (typeof object !== 'string') {
-                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${util_1.inspect(object)}`);
+            const response = yield (this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath }).promise());
+            // if (typeof response.Body !== 'string' && typeof response.Body !== 'buffer') {
+            //     core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${inspect(object)}`);
+            //     return emptyStateRecord();
+            // }
+            if (!response.Body) {
+                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no response Body from S3`);
                 return emptyStateRecord();
             }
             try {
-                const stateJson = JSON.parse(object);
+                const stateJson = JSON.parse(response.Body.toString('utf-8'));
                 if (isStateRecord(stateJson)) {
                     return stateJson;
                 }
@@ -119,8 +123,8 @@ class S3State {
                     return emptyStateRecord();
                 }
             }
-            catch (_a) {
-                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json`);
+            catch (err) {
+                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json: ${err.message}\nResponse:\n${util_1.inspect(response)}`);
                 return emptyStateRecord();
             }
         });

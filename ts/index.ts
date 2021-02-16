@@ -69,21 +69,25 @@ class S3State {
     }
 
     private async getState(): Promise<StateRecord> {
-        const object: unknown = await this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
-        if (typeof object !== 'string') {
-            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${inspect(object)}`);
+        const response = await (this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath }).promise());
+        // if (typeof response.Body !== 'string' && typeof response.Body !== 'buffer') {
+        //     core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${inspect(object)}`);
+        //     return emptyStateRecord();
+        // }
+        if (!response.Body) {
+            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no response Body from S3`);
             return emptyStateRecord();
         }
         try {
-            const stateJson: unknown = JSON.parse(object);
+            const stateJson: unknown = JSON.parse(response.Body.toString('utf-8'));
             if (isStateRecord(stateJson)) {
                 return stateJson;
             } else {
                 core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: not a StateRecord type`);
                 return emptyStateRecord();
             }
-        } catch {
-            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json`);
+        } catch (err) {
+            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: error parsing json: ${err.message}\nResponse:\n${inspect(response)}`);
             return emptyStateRecord();
         }
     }
