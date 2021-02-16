@@ -16,6 +16,9 @@ inputs:
   aws_state_command:
     description: 'Command to execute'
     required: true
+  counter_name:
+    description: 'Command "increment_counter": Name of the counter'
+    required: false
 outputs:
   time:
     description: 'The time we greeted you'
