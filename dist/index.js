@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const s3_1 = __importDefault(__nccwpck_require__(3256));
+const util_1 = __nccwpck_require__(1669);
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const AWS_KEY_ID = core.getInput('aws_key_id', { required: true });
@@ -105,7 +106,7 @@ class S3State {
         return __awaiter(this, void 0, void 0, function* () {
             const object = yield this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
             if (typeof object !== 'string') {
-                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${object}`);
+                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${util_1.inspect(object)}`);
                 return emptyStateRecord();
             }
             try {

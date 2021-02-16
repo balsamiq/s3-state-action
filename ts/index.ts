@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import S3 from 'aws-sdk/clients/s3';
+import { inspect } from 'util';
 
 async function main() {
     const AWS_KEY_ID = core.getInput('aws_key_id', { required: true });
@@ -70,7 +71,7 @@ class S3State {
     private async getState(): Promise<StateRecord> {
         const object: unknown = await this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
         if (typeof object !== 'string') {
-            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${object}`);
+            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${inspect(object)}`);
             return emptyStateRecord();
         }
         try {
