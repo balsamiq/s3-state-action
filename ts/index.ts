@@ -70,7 +70,7 @@ class S3State {
     private async getState(): Promise<StateRecord> {
         const object: unknown = await this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
         if (typeof object !== 'string') {
-            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found`);
+            core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${object}`);
             return emptyStateRecord();
         }
         try {

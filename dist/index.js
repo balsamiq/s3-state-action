@@ -105,7 +105,7 @@ class S3State {
         return __awaiter(this, void 0, void 0, function* () {
             const object = yield this.s3.getObject({ Bucket: this.bucket_name, Key: this.state_json_filepath });
             if (typeof object !== 'string') {
-                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found`);
+                core.info(`getState ${this.bucket_name}::${this.state_json_filepath}: no string found, but ${object}`);
                 return emptyStateRecord();
             }
             try {
