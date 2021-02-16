@@ -1,0 +1,24 @@
+name: 'S3 Shared State'
+description: 'Manage shared state for GitHub Actions via S3'
+inputs:
+  aws_key_id:
+    description: 'AWS Key ID'
+    required: true
+  aws_secret_access_key:
+    description: 'AWS Secret Access Key'
+    required: true
+  aws_state_bucket_name:
+    description: 'Bucket Name'
+    required: true
+  aws_state_directory:
+    description: 'Path to the directory containing the state'
+    required: true
+  aws_state_command:
+    description: 'Command to execute'
+    required: true
+outputs:
+  time:
+    description: 'The time we greeted you'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
